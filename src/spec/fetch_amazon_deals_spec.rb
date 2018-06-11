@@ -21,8 +21,9 @@ describe 'Amazon Scraping' do
   it 'should fetch product data' do
     @active_deals = @deals_page.active_deals
     puts "Fetched [#{@active_deals.size}] product details"
-    puts @active_deals.first
-
+    f = File.open('products.json', 'w+')
+    f.write(JSON.generate(products: @active_deals.map(&:raw)))
+    f.close
     expect(@active_deals.size).to be > 0
   end
 end

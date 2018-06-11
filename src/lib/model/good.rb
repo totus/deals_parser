@@ -17,11 +17,13 @@ module Bariga
 
   # Basic entity that describes a product fetched from this or that marketplace
   class Good
+    attr_reader :raw
     include Sellable
     include Viewable
 
     def initialize(props)
-      @object = props.to_obj
+      @raw = props
+      @object = @raw.to_obj
     end
 
     def single_price?
@@ -39,6 +41,10 @@ module Bariga
 
     def price_max
       price_range.max
+    end
+
+    def to_s
+      JSON.generate(@raw)
     end
 
     private
