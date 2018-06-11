@@ -1,3 +1,5 @@
+require_relative '../support/extensions.rb'
+
 module Bariga
   # mix-in that describes expected attribuges for a Sellable entity
   module Sellable

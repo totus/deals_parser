@@ -2,15 +2,15 @@ require 'rspec'
 require_relative '../lib/parser/amazon_deals_page.rb'
 
 describe 'Amazon Scraping' do
-
   before(:all) do
     Capybara.configure do |config|
       config.run_server = false
-      config.default_max_wait_time = 10
+      config.default_max_wait_time = 15
     end
     @session = Capybara::Session.new(:selenium_chrome_headless)
     @deals_page = Bariga::Amazon::TodayDealsPage.new(@session)
   end
+
   it 'should get good details' do
     @deals_page.open
     total_deals = @deals_page.total_deals

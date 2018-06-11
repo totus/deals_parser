@@ -1,9 +1,15 @@
-require 'open-uri'
+require 'uri'
 require 'capybara'
 require 'json'
+require 'logger'
+
+require_relative '../model/good.rb'
 
 # top module for all bariga-related stuff
 module Bariga
+  LOGGER = Logger.new(STDOUT)
+  LOGGER.level = Logger::DEBUG
+
   # module for dealing with Amazon shit
   module Amazon
     # module with basic functionality of a page (defined by a presence of unique hook selector)
@@ -11,7 +17,9 @@ module Bariga
       PAGE_HOOK = nil
 
       def current?
-        !@session.find_all(self.class.const_get(:PAGE_HOOK)).empty?
+        page_hook = self.class.const_get(:PAGE_HOOK)
+        LOGGER.info("Checking URL [#{URI(@session.current_url).path}] for presence of [#{page_hook}]")
+        !@session.find_all(page_hook).empty?
       end
     end
 
@@ -27,11 +35,14 @@ module Bariga
       protected
 
       def parse(use_selector = GoodCell::SELECTOR)
+        LOGGER.info("Started parsing #{@session.current_url}")
         goods = @session.find_all(use_selector)
-        goods.map.with_object([]) do |good_element, res|
+        parsed = goods.map.with_object([]) do |good_element, res|
           res << GoodCell.new(good_element, @session)
           res.last.collect_data
         end.flatten
+        LOGGER.info("Parsed #{parsed.size} items")
+        parsed
       end
     end
 
@@ -53,7 +64,7 @@ module Bariga
       end
 
       def active_deals
-        process_raw
+        process_raw(raw_deals.flatten)
       end
 
       def raw_deals
@@ -67,25 +78,29 @@ module Bariga
 
       private
 
-      def process_raw
-        raw_deals.map do |product|
-          puts "Opening url #{product}"
+      def process_raw(deals)
+        counter = 0
+        deals.map do |product|
+          LOGGER.info "Opening url #{product}"
           @session.visit product.url
           page = GoodPage.new(@session)
           select_first_interim unless page.current?
-          attributes = GoodPage.new(@session).fetch
+          LOGGER.info "processing element ##{counter += 1}"
+          attributes = page.fetch
           product.to_obj(attributes)
         end
-
       end
 
       def fetch_all
         @goods << parse
-        # @goods << fetch_next if next_page?
+        @goods << fetch_next if next_page?
       end
 
       def select_first_interim
-        @session.visit (@session.find_all('a[class*="access-detail-page"]').first || @session.find_all('a[class*="asin-link"]').first).href
+        interim_link = (@session.find_all('a[class*="access-detail-page"]').first ||
+                        @session.find_all('a[class*="asin-link"]').first ||
+                        @session.find_all('div[class*="card-details"]').first.find_all('a').first)
+        @session.visit interim_link[:href]
       end
 
       def fetch_next
@@ -110,11 +125,13 @@ module Bariga
       end
 
       def url
-        @url ||= @session.find_all('link[rel="canonical"]').first.strip
+        LOGGER.info("Getting canonical URL from [#{URI(@session.current_url).path}]")
+        @url ||= @session.find_all('link[rel="canonical"]', visible: false).first[:href].strip
       end
 
       def product_title
-        @session.find_all('span[id="productTitle"]').first.text.strip
+        LOGGER.info("Getting product title from #{URI(url).path}")
+        @session.find_all('span[id*="roductTitle"]').first.text.strip
       end
 
       def images
@@ -122,7 +139,7 @@ module Bariga
       end
 
       def price
-        @session.find_all('span[id^="priceblock_"]').first.text.strip
+        @session.find_all('.a-color-price').first.text.strip
       end
 
       def fetch
@@ -145,7 +162,7 @@ module Bariga
 
       def price
         @element_card.find('div[class*="priceBlock"]').text
-      rescue
+      rescue RuntimeError, Capybara::ElementNotFound
         0
       end
 
@@ -188,8 +205,8 @@ module Bariga
       end
 
       def to_obj(added_attributes)
-        puts "converting object to a [Good]"
-        Good(@storage.update(added_attributes))
+        LOGGER.info 'Converting item to a good'
+        Bariga::Good.new(@storage.update(added_attributes))
       end
 
       def to_s
