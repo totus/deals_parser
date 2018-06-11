@@ -23,6 +23,17 @@ module Bariga
       end
     end
 
+    # fucking factory
+    class PageFactory
+      def initialize(session)
+        @session = session
+      end
+
+      def identify_page
+        nil.nil?
+      end
+    end
+
     # Common ancestor for all the Amazon's Deals pages of various types
     class DealsPage
       NEXT_PAGE_BUTTON_SELECTOR = 'a[href="#next"]'.freeze
@@ -35,13 +46,13 @@ module Bariga
       protected
 
       def parse(use_selector = GoodCell::SELECTOR)
-        LOGGER.info("Started parsing #{@session.current_url}")
+        LOGGER.debug("Started parsing #{@session.current_url}")
         goods = @session.find_all(use_selector)
         parsed = goods.map.with_object([]) do |good_element, res|
           res << GoodCell.new(good_element, @session)
           res.last.collect_data
         end.flatten
-        LOGGER.info("Parsed #{parsed.size} items")
+        LOGGER.debug("Parsed #{parsed.size} items")
         parsed
       end
     end
@@ -81,19 +92,22 @@ module Bariga
       def process_raw(deals)
         counter = 0
         deals.map do |product|
-          LOGGER.info "Opening url #{product}"
+          LOGGER.debug "Opening url #{product}"
           @session.visit product.url
           page = GoodPage.new(@session)
-          select_first_interim unless page.current?
           LOGGER.info "processing element ##{counter += 1}"
+          # select_first_interim unless page.current?
+          next unless page.current? # TODO: properly process non-single items instead of skipping them
           attributes = page.fetch
           product.to_obj(attributes)
-        end
+        end.compact
       end
 
       def fetch_all
         @goods << parse
-        @goods << fetch_next if next_page?
+        @goods << fetch_next while next_page? && @goods.size < total_deals
+        LOGGER.info "Parsed and fetched #{@goods.compact!.size} items"
+        @goods
       end
 
       def select_first_interim
@@ -104,6 +118,7 @@ module Bariga
       end
 
       def fetch_next
+        LOGGER.info 'Fetching next page'
         @session.find(NEXT_PAGE_BUTTON_SELECTOR).click
         parse
       end
@@ -125,12 +140,12 @@ module Bariga
       end
 
       def url
-        LOGGER.info("Getting canonical URL from [#{URI(@session.current_url).path}]")
+        LOGGER.debug("Getting canonical URL from [#{URI(@session.current_url).path}]")
         @url ||= @session.find_all('link[rel="canonical"]', visible: false).first[:href].strip
       end
 
       def product_title
-        LOGGER.info("Getting product title from #{URI(url).path}")
+        LOGGER.debug("Getting product title from #{URI(url).path}")
         @session.find_all('span[id*="roductTitle"]').first.text.strip
       end
 
@@ -205,7 +220,7 @@ module Bariga
       end
 
       def to_obj(added_attributes)
-        LOGGER.info 'Converting item to a good'
+        LOGGER.debug 'Converting item to a good'
         Bariga::Good.new(@storage.update(added_attributes))
       end
 

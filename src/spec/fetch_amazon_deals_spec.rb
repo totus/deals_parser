@@ -5,7 +5,7 @@ describe 'Amazon Scraping' do
   before(:all) do
     Capybara.configure do |config|
       config.run_server = false
-      config.default_max_wait_time = 15
+      config.default_max_wait_time = 12
     end
     @session = Capybara::Session.new(:selenium_chrome_headless)
     @deals_page = Bariga::Amazon::TodayDealsPage.new(@session)
