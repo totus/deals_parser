@@ -1,5 +1,6 @@
 require 'rspec'
 require_relative '../lib/parser/amazon_deals_page.rb'
+require_relative '../lib/parser/amazon/today_deals_page.rb'
 
 describe 'Amazon Scraping' do
   before(:all) do
