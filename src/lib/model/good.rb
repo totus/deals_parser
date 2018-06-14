@@ -1,25 +1,28 @@
 require_relative '../support/extensions.rb'
 
 module Bariga
-  # mix-in that describes expected attribuges for a Sellable entity
-  module Sellable
-    def price; end
-
-    def availability; end
-  end
-
   # mix-in with defined method for images
   module Viewable
-    def images
-      []
+    def as_message(max_size = 200)
+      price_and_url = "*💸#{price}*\n#{url}"
+      "*💸#{price}*\n#{title[0, max_size - price_and_url.length]}\n#{url}\nЗвоните @IggyPob"[0, max_size]
     end
   end
 
   # Basic entity that describes a product fetched from this or that marketplace
   class Good
     attr_reader :raw
-    include Sellable
     include Viewable
+
+    def self.from_json(json_data)
+      products = JSON.load(json_data)
+      # LOGGER.debug("Loaded #{products}")
+      products["products"].map { |thing| Good.new(thing) }
+    end
+
+    def method_missing(method, *args, &block)
+      @object.send(method, *args, &block) if @object.respond_to? method
+    end
 
     def initialize(props)
       @raw = props
