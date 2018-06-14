@@ -4,8 +4,8 @@ module Bariga
   # mix-in with defined method for images
   module Viewable
     def as_message(max_size = 200)
-      price_and_url = "*💸#{price}*\n#{url}"
-      "*💸#{price}*\n#{title[0, max_size - price_and_url.length]}\n#{url}\nЗвоните @IggyPob"[0, max_size]
+      price_and_url = "*#{price}*\n#{url}"
+      "*#{price}*\n#{title[0, 100 - price_and_url.length]}\n#{url}\nCall #911"[0, max_size]
     end
   end
 

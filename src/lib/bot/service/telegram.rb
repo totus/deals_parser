@@ -29,13 +29,15 @@ module Bariga
               when %r{^/publish\s*(?:next|prev)?\s*\d*}
                 count_of_deals = message.text[/\d+/].to_i || 10
                 @sent_to_channel = 0 if @sent_to_channel > deals.size
+                LOGGER.info("Requested to publish #{count_of_deals} goods")
                 deals[@sent_to_channel, count_of_deals].each do |product|
                   next unless product.images.first.start_with?('http')
-                  LOGGER.info("Processing product [#{product.title}] with image:\n->#{product.images.first}")
+                  #LOGGER.info("Processing product [#{product.title}] with image:\n->#{product.images.first}\n\n\nMessage:\n#{product.as_message}\n")
                   bot.api.send_photo(chat_id: '-1001257936261', photo: product.images.first, parse_mode: 'Markdown', caption: product.as_message)
                   # bot.api.send_message(chat_id: '-1001257936261', text: product.as_message, disable_web_page_preview: true)
                 end
                 @sent_to_channel += count_of_deals
+                LOGGER.info("Processed #{count_of_deals}")
               end
             end
           end
