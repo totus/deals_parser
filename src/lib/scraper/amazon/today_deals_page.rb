@@ -50,7 +50,7 @@ module Bariga
 
       def fetch_all
         @goods << parse
-        # @goods << fetch_next while next_page? && @goods.size < total_deals
+        @goods << fetch_next while next_page? && @goods.size < total_deals
         LOGGER.info "Parsed and fetched #{@goods.flatten.compact.size} items"
         @goods.flatten.compact
       end
