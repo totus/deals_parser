@@ -15,13 +15,17 @@ module Bariga
     include Viewable
 
     def self.from_json(json_data)
-      products = JSON.load(json_data)
+      products = JSON.parse(json_data)
       # LOGGER.debug("Loaded #{products}")
-      products["products"].map { |thing| Good.new(thing) }
+      products['products'].map { |thing| Good.new(thing) }
     end
 
     def method_missing(method, *args, &block)
-      @object.send(method, *args, &block) if @object.respond_to? method
+      @object.respond_to? method ? @object.send(method, *args, &block) : super
+    end
+
+    def respond_to_missing?(method_name, include_private = false)
+      @object.respond_to?(method_name) || super
     end
 
     def initialize(props)

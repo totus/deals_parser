@@ -38,6 +38,8 @@ module Bariga
       def url
         LOGGER.debug("Getting canonical URL from [#{URI(@session.current_url).path}]")
         @url ||= @session.find_all('link[rel="canonical"]', visible: false).first[:href].strip
+      rescue
+        @url ||= @session.current_url[0, @session.current_url.rindex('/')]
       end
 
       def product_title
@@ -99,6 +101,8 @@ module Bariga
                      start_date: start_date,
                      end_date: end_date,
                      url: url }
+      rescue
+        {}
       end
 
       def product_name!

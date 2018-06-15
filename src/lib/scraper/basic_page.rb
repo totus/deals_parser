@@ -5,8 +5,8 @@ module Bariga
 
     def current?
       page_hook = self.class.const_get(:PAGE_HOOK)
-      LOGGER.info("Checking URL [#{URI(@session.current_url).path}] for presence of [#{page_hook}]")
-      !@session.find_all(page_hook).empty?
+      LOGGER.debug("Checking URL [#{URI(@session.current_url).path}] content for presence of [#{page_hook}]")
+      @session && !@session.find_all(page_hook).empty?
     end
   end
 end

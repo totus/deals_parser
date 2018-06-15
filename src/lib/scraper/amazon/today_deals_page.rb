@@ -40,7 +40,7 @@ module Bariga
           LOGGER.debug "Opening url #{product}"
           @session.visit product.url
           page = GoodPage.new(@session)
-          LOGGER.info "processing element ##{counter += 1}"
+          LOGGER.debug "processing element ##{counter += 1}"
           # select_first_interim unless page.current?
           next unless page.current? # TODO: properly process non-single items instead of skipping them
           attributes = page.fetch
@@ -50,7 +50,7 @@ module Bariga
 
       def fetch_all
         @goods << parse
-        @goods << fetch_next while next_page? && @goods.size < total_deals
+        @goods << fetch_next while next_page?
         LOGGER.info "Parsed and fetched #{@goods.flatten.compact.size} items"
         @goods.flatten.compact
       end
@@ -64,12 +64,12 @@ module Bariga
 
       def fetch_next
         LOGGER.info 'Fetching next page'
-        @session.find(NEXT_PAGE_BUTTON_SELECTOR).click
+        @session.find(NEXT_PAGE_BUTTON_TRAIT[:css], text: NEXT_PAGE_BUTTON_TRAIT[:text]).click
         parse
       end
 
       def next_page?
-        !@session.find_all(NEXT_PAGE_BUTTON_SELECTOR).empty?
+        !@session.find_all(NEXT_PAGE_BUTTON_TRAIT[:css], text: NEXT_PAGE_BUTTON_TRAIT[:text]).empty?
       end
     end
   end

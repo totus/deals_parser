@@ -4,7 +4,7 @@ module Bariga
   module Amazon
     # Common ancestor for all the Amazon's Deals pages of various types
     class DealsPage
-      NEXT_PAGE_BUTTON_SELECTOR = 'a[href="#next"]'.freeze
+      NEXT_PAGE_BUTTON_TRAIT = { css: 'a[href="#next"]', text: 'Next' }.freeze
 
       def initialize(session)
         @session = session
@@ -17,10 +17,10 @@ module Bariga
         LOGGER.debug("Started parsing #{@session.current_url}")
         goods = @session.find_all(use_selector)
         parsed = goods.map.with_object([]) do |good_element, res|
-          res << GoodCell.new(good_element, @session)
-          res.last.collect_data
+          cell = GoodCell.new(good_element, @session)
+          res << cell unless cell.collect_data.empty?
         end.flatten
-        LOGGER.debug("Parsed #{parsed.size} items")
+        LOGGER.debug("Finished parsing #{goods.size} items, collected #{parsed.size} items")
         parsed
       end
     end

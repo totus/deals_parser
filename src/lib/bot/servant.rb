@@ -1,3 +1,4 @@
+# Module that suppose to be a common interface for bots
 module Servant
   def send_message(destination, message, params = {})
     send_message_to(destination, message, params)

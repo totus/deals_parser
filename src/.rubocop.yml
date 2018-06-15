@@ -1,5 +1,14 @@
 Metrics/LineLength:
   Max: 140
 
+Metrics/MethodLength:
+  Max: 30
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Metrics/AbcSize:
+  Max: 40
+
 Style/RescueStandardError:
   EnforcedStyle: implicit
