@@ -52,7 +52,7 @@ module Bariga
 
       def fetch_all
         @goods << parse
-        # @goods << fetch_next while next_page?
+        @goods << fetch_next while next_page?
         LOGGER.info "Parsed and fetched #{@goods.flatten.compact.size} items"
         @goods.flatten.compact
       end
