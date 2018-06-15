@@ -13,8 +13,6 @@ module Bariga
         super(session)
         @base_url = 'https://www.amazon.com/b?node=17595940011&lo=fashion&sort=date-desc-rank'
       end
-
-
     end
   end
 end
