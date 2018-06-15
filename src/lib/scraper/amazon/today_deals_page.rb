@@ -44,13 +44,15 @@ module Bariga
           # select_first_interim unless page.current?
           next unless page.current? # TODO: properly process non-single items instead of skipping them
           attributes = page.fetch
-          product.to_obj(attributes)
+          good = product.to_obj(attributes)
+          good.save
+          good
         end.compact
       end
 
       def fetch_all
         @goods << parse
-        @goods << fetch_next while next_page?
+        # @goods << fetch_next while next_page?
         LOGGER.info "Parsed and fetched #{@goods.flatten.compact.size} items"
         @goods.flatten.compact
       end

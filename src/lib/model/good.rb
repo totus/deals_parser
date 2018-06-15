@@ -1,6 +1,7 @@
 require_relative '../support/extensions.rb'
 
 module Bariga
+  TEMP = "#{File.expand_path(__dir__)}/../../data/temporary/".freeze
   # mix-in with defined method for images
   module Viewable
     def as_message(max_size = 200)
@@ -9,15 +10,23 @@ module Bariga
     end
   end
 
+  # mix-in with methods for save & load
+  module Portable
+    def save
+      File.open(File.join(TEMP, "#{@raw[:title].hash.to_s(16)}.json"), 'w+').write(JSON.generate(@raw)) unless @raw.empty?
+    end
+  end
+
   # Basic entity that describes a product fetched from this or that marketplace
   class Good
     attr_reader :raw
     include Viewable
+    include Portable
 
     def self.from_json(json_data)
       products = JSON.parse(json_data)
       # LOGGER.debug("Loaded #{products}")
-      products['products'].map { |thing| Good.new(thing) }
+      products['products'] ? products['products'].map { |thing| Good.new(thing) } : products
     end
 
     def method_missing(method, *args, &block)

@@ -16,8 +16,10 @@ module Bariga
       def parse(use_selector = GoodCell::SELECTOR)
         LOGGER.debug("Started parsing #{@session.current_url}")
         goods = @session.find_all(use_selector)
+        LOGGER.debug("Found #{goods.size} potentially interesting objects")
         parsed = goods.map.with_object([]) do |good_element, res|
           cell = GoodCell.new(good_element, @session)
+          LOGGER.debug("Got #{cell.collect_data}")
           res << cell unless cell.collect_data.empty?
         end.flatten
         LOGGER.debug("Finished parsing #{goods.size} items, collected #{parsed.size} items")

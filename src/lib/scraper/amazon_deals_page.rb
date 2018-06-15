@@ -78,7 +78,8 @@ module Bariga
 
     # class describing PageElement on Today's Deals page with an appropriate product
     class GoodCell
-      SELECTOR = 'div[id^="100_dealView_"][class*="singleCell"]'.freeze
+      # TODO: Whenever parsing returns zero elements, we need to indicate it and adjust the code/selectors
+      SELECTOR = 'div[id*="_dealView_"][class*="singleCell"]'.freeze
       def initialize(good_element, session)
         @element_card = good_element
         @session = session
@@ -101,8 +102,6 @@ module Bariga
                      start_date: start_date,
                      end_date: end_date,
                      url: url }
-      rescue
-        {}
       end
 
       def product_name!
