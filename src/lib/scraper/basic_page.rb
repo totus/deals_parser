@@ -8,5 +8,10 @@ module Bariga
       LOGGER.debug("Checking URL [#{URI(@session.current_url).path}] content for presence of [#{page_hook}]")
       @session && !@session.find_all(page_hook).empty?
     end
+
+    def open
+      @session.visit @base_url
+      self
+    end
   end
 end

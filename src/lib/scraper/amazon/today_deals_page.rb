@@ -27,11 +27,6 @@ module Bariga
         @raw_deals ||= fetch_all
       end
 
-      def open
-        @session.visit @base_url
-        self
-      end
-
       private
 
       def process_raw(deals)
@@ -50,28 +45,11 @@ module Bariga
         end.compact
       end
 
-      def fetch_all
-        @goods << parse
-        @goods << fetch_next while next_page?
-        LOGGER.info "Parsed and fetched #{@goods.flatten.compact.size} items"
-        @goods.flatten.compact
-      end
-
       def select_first_interim
         interim_link = (@session.find_all('a[class*="access-detail-page"]').first ||
             @session.find_all('a[class*="asin-link"]').first ||
             @session.find_all('div[class*="card-details"]').first.find_all('a').first)
         @session.visit interim_link[:href]
-      end
-
-      def fetch_next
-        LOGGER.info 'Fetching next page'
-        @session.find(NEXT_PAGE_BUTTON_TRAIT[:css], text: NEXT_PAGE_BUTTON_TRAIT[:text]).click
-        parse
-      end
-
-      def next_page?
-        !@session.find_all(NEXT_PAGE_BUTTON_TRAIT[:css], text: NEXT_PAGE_BUTTON_TRAIT[:text]).empty?
       end
     end
   end
