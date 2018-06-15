@@ -25,7 +25,8 @@ module Bariga
               when %r{^/deals\s*\d*}
                 count_of_deals = message.text[/^[^\d]+(\d+)/, 1].to_i || 10
                 deals.first(count_of_deals).each do |product|
-                  bot.api.send_message(chat_id: message.chat.id, text: product.as_message)
+                  LOGGER.debug("Sending product #{product}")
+                  bot.api.send_message(chat_id: message.chat.id, text: product.as_message, parse_mode: 'Markdown')
                 end
               when %r{^/publish\s*(?:next|prev)?\s*\d*}
                 count_of_deals = message.text[/\d+/].to_i || 10

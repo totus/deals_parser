@@ -5,6 +5,7 @@ module Bariga
   # mix-in with defined method for images
   module Viewable
     def as_message(max_size = 200)
+      LOGGER.debug(["Product is:", "price: #{price}", "url: #{url}", "title: #{title}"].join("\n->"))
       price_and_url = "*#{price}*\n#{url}"
       "*#{price}*\n#{title[0, 100 - price_and_url.length]}\n#{url}\nCall #911"[0, max_size]
     end
@@ -30,7 +31,7 @@ module Bariga
     end
 
     def method_missing(method, *args, &block)
-      @object.respond_to? method ? @object.send(method, *args, &block) : super
+      @object.respond_to?(method) ? @object.send(method, *args, &block) : super
     end
 
     def respond_to_missing?(method_name, include_private = false)
