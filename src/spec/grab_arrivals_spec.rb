@@ -18,14 +18,14 @@ describe 'Arrival Grabber' do
     end
     context 'for Women' do
       before(:all) do
-        @men_arrival_page = Bariga::Amazon::MenNewArrivals.new
+        @women_arrival_page = Bariga::Amazon::WomenNewArrivals.new
       end
       it 'Fetches deals from the marketplace' do
-        expect(@men_arrival_page.deals.size).to be > 0
+        expect(@women_arrival_page.deals.size).to be > 0
       end
       it 'Persists deals to file system' do
         file_name = "#{Date.today.strftime('%Y_%m_%d')}_women_products.json"
-        @men_arrival_page.save_deals file_name
+        @women_arrival_page.save_deals file_name
         expect(File.open(file_name, 'r').size).to be > 0
       end
     end
