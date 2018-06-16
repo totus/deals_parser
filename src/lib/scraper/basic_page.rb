@@ -9,7 +9,7 @@ module Bariga
       @session && !@session.find_all(page_hook).empty?
     end
 
-    def open
+    def navigate
       @session.visit @base_url
       self
     end
