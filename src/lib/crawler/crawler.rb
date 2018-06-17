@@ -7,16 +7,21 @@ module Bariga
     # mix-in with some crawler common functionality
     module BasicCrawler
       def absolutize_url(url)
-        puts "Adding [#{@base_url}] to [#{url}]"
-        URI.parse(url).scheme.eql?('https') ? url : URI.join(@base_url, url).to_s
+        puts "Adding [#{self.class.base_url}] to [#{url}]"
+        URI.parse(url).scheme.eql?('https') ? url : URI.join(self.class.base_url, url).to_s
       end
 
-      def extract_data(element, selector, extractor_fn)
-        element.css(selector)
-               .first
-               .send(*extractor_fn)
-               .to_s
-               .strip
+      def extract_data(element, extract_config)
+        selector = extract_config[:css]
+        extractor_fn = extract_config[:extractor]
+        skip_conditions = extract_config[:skip]
+        fallbacks = extract_config[:fallbacks]
+        res = extract(element, selector, extractor_fn)
+        skip_conditions && skip_conditions.any? { |skip| res.send(*skip) } && fallbacks && fallbacks.each do |fallback|
+          res = extract(element, fallback[:css], fallback[:extractor])
+          break if res
+        end
+        res
       end
 
       def self.included(klass)
@@ -25,7 +30,19 @@ module Bariga
 
       def save(data)
         persist_data = { products: data, size: data.size }
-        File.open(self.class.class_info[:file_pattern],'w+').write(JSON.generate(persist_data))
+        File.open(self.class.class_info[:file_pattern], 'w+').write(JSON.generate(persist_data))
+      end
+
+      private
+
+      def extract(element, selector, extractor_fn)
+        element.css(selector)
+            .first
+            .send(*extractor_fn)
+            .to_s
+            .strip
+      rescue
+        nil
       end
     end
     # Registry for all the crawlers added, so that we can manage all of them
