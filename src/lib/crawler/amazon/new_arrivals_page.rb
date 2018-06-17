@@ -1,4 +1,5 @@
 require_relative './deals_page.rb'
+require_relative '../crawler.rb'
 require 'nokogiri'
 require 'open-uri'
 require 'json'
@@ -7,20 +8,10 @@ require 'logger'
 module Bariga
   module Amazon
     LOGGER = Logger.new(STDOUT)
-    module AgentFaker
-      def self.headers
-        {
-          'User-Agent' => "Mozilla/#{rand(5)+1}.0 (#{['Macintosh','Linux', 'Windows'].sample}; Intel Mac OS X 10_#{(10..13).to_a.sample}_5) #{['AppleWebKit', 'Opera', 'Safari', 'Chrome']}/535.36 (KHTML, like Gecko) Chrome/#{(55..66).to_a.sample}.0.3359.181 Safari/537.36",
-          'accept-language' => 'en-US,en;q=0.9,ru;q=0.8',
-          'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8'
-        }
-      end
-    end
-
     class NokogiriProductPage
       def initialize(props)
         @props = props
-        @page = Nokogiri::HTML(open(props[:url], AgentFaker.headers.merge('referrer' => @props[:url])))
+        @page = Nokogiri::HTML(open(props[:url], Bariga::Crawler::AgentFaker.headers('referrer' => @props[:url])))
       end
 
       def title
@@ -127,7 +118,7 @@ module Bariga
 
       def next_page_deals
         return [] unless next_page?
-        @page = Nokogiri::HTML(open(URI.join(@base_url, @next_page_url), AgentFaker.headers.merge('referrer' => @page_url)))
+        @page = Nokogiri::HTML(open(URI.join(@base_url, @next_page_url), Bariga::Crawler::AgentFaker.headers('referrer' => @page_url)))
         current_page_deals
       end
 
@@ -144,7 +135,7 @@ module Bariga
       def initialize
         super
         @page_url = "#{@base_url}/b?node=17595940011&lo=fashion&sort=date-desc-rank"
-        @page = Nokogiri::HTML(open(@page_url, AgentFaker.headers.merge('referrer' => @page_url)))
+        @page = Nokogiri::HTML(open(@page_url, Bariga::Crawler::AgentFaker.headers('referrer' => @page_url)))
       end
     end
 
@@ -154,7 +145,7 @@ module Bariga
       def initialize
         super
         @page_url = "#{@base_url}/b?node=17589461011&lo=fashion&sort=date-desc-rank"
-        @page = Nokogiri::HTML(open(@page_url, AgentFaker.headers.merge('referrer' => @page_url)))
+        @page = Nokogiri::HTML(open(@page_url, Bariga::Crawler::AgentFaker.headers('referrer' => @page_url)))
       end
     end
   end

@@ -1,5 +1,5 @@
 require 'rspec'
-require_relative '../lib/scraper/amazon/new_arrivals_page.rb'
+require_relative '../lib/crawler/amazon/new_arrivals_page.rb'
 
 describe 'Arrival Grabber' do
   describe 'Grabs new arrivals' do
