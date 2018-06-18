@@ -33,7 +33,7 @@ module Bariga
                   css: 'div[data-auto-id="productTileDescription"]',
                   extractor: [:inner_text]
               },
-              img: {
+              images: {
                   css: 'img[data-auto-id="productTileImage"]',
                   extractor: [:[], :src],
                   skip: [:nil?],
