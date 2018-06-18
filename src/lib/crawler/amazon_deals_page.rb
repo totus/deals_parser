@@ -9,7 +9,7 @@ require_relative './basic_page.rb'
 # top module for all bariga-related stuff
 module Bariga
   LOGGER = Logger.new(STDOUT)
-  LOGGER.level = Logger::DEBUG
+  LOGGER.level = Logger::INFO
 
   # module for dealing with Amazon shit
   module Amazon
