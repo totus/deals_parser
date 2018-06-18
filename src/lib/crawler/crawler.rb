@@ -7,7 +7,6 @@ module Bariga
     # mix-in with some crawler common functionality
     module BasicCrawler
       def absolutize_url(url)
-        puts "Adding [#{self.class.base_url}] to [#{url}]"
         URI.parse(url).scheme.eql?('https') ? url : URI.join(self.class.base_url, url).to_s
       end
 

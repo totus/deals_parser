@@ -1,5 +1,6 @@
 require 'rspec'
 require 'json'
+require_relative '../lib/crawler/asos/asos_crawler.rb'
 require_relative '../lib/crawler/6pm/new_arrivals_page.rb'
 require_relative '../lib/crawler/vs/victorias_secret.rb'
 

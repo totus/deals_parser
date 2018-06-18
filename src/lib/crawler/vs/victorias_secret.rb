@@ -50,7 +50,6 @@ module Bariga
         private
 
         def sanitize_product(product_hash)
-          puts "Got for processing #{product_hash}"
           product_hash[:url] = absolutize_url(product_hash[:url])
           product_hash[:title] = product_hash[:title].gsub(/^New!\s*/i, '')
           product_hash[:img] = "https:#{product_hash[:img]}" if product_hash[:img].start_with?('//')
