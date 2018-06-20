@@ -36,10 +36,18 @@ module Bariga
       end
 
       def save_to_db(data)
+        data = data.map(&:symbolize_keys)
+        successful_results = 0
+        incomplete_results = 0
         data.each do |product|
-          imgs = [product[:images]].flatten.map do |image|
-            Image.find_by(url: image) || Image.create(url: image)
+          if incomplete?(product)
+            incomplete_results += 1
+            next
           end
+          imgs = [product[:images]].flatten.map do |image|
+            next if image.nil? || image.empty?
+            Image.find_by(url: image) || Image.create(url: image)
+          end.compact
           prod = Product.find_by(url: product[:url])
           if prod
             prod.update(name: product[:title], url: product[:url], price: product[:price])
@@ -48,10 +56,16 @@ module Bariga
             prod = Product.create(name: product[:title], url: product[:url], price: product[:price])
           end
           prod.images = imgs
+          successful_results += 1
         end
+        puts "Save to DB complete.\nStats:\n\t\tsaved: [#{successful_results}/#{successful_results+incomplete_results}]\n\t\tskipped: [#{incomplete_results}/#{successful_results+incomplete_results}]"
       end
 
       private
+
+      def incomplete?(product)
+        product[:price].to_s.empty? || product[:images].nil? || product[:images].empty?
+      end
 
       def extract(element, selector, extractor_fn)
         element.css(selector)
