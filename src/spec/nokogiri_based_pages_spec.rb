@@ -15,6 +15,7 @@ describe 'Nokogiri-based Crawlers' do
         current_crawler = crawler.send(:new)
         products = current_crawler.products
         current_crawler.save(products)
+        current_crawler.save_to_db(products)
         expect(products.size).to be > 0
       end
     end

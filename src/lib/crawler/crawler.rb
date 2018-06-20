@@ -1,6 +1,8 @@
 require 'nokogiri'
 require 'open-uri'
 require 'json'
+require 'sqlite3'
+require_relative '../model/product.rb'
 
 module Bariga
   module Crawler
@@ -31,6 +33,16 @@ module Bariga
       def save(data)
         persist_data = { products: data, size: data.size }
         File.open(self.class.class_info[:file_pattern], 'w+').write(JSON.generate(persist_data))
+      end
+
+      def save_to_db(data)
+        data.each do |product|
+          imgs = [product[:images]].flatten.map do |image|
+            Image.find_by(url: image) || Image.create(url: image)
+          end
+          prod = Product.find_by(url: product[:url]) || Product.create(name: product[:title], url: product[:url], price: product[:price])
+          prod.images = imgs
+        end
       end
 
       private

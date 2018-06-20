@@ -78,7 +78,7 @@ module Bariga
             title: hash['description'],
             price: hash['reducedAmount'] || hash['amount'],
             url: absolutize_url(hash['url']),
-            image: absolutize_url(hash['image'])
+            images: absolutize_url(hash['image'])
           }
         end
 

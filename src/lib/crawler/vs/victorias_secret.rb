@@ -29,7 +29,7 @@ module Bariga
                        css: 'div[itemprop="name"]',
                        extractor: [:inner_text]
                      },
-              img: {
+              images: {
                      css: 'img[role*="presentation"]',
                      extractor: [:[], :src],
                      skip: [:nil?, [:end_with?, 'white.png']],
@@ -52,7 +52,7 @@ module Bariga
         def sanitize_product(product_hash)
           product_hash[:url] = absolutize_url(product_hash[:url])
           product_hash[:title] = product_hash[:title].gsub(/^New!\s*/i, '')
-          product_hash[:img] = "https:#{product_hash[:img]}" if product_hash[:img].start_with?('//')
+          product_hash[:images] = "https:#{product_hash[:images]}" if product_hash[:images].start_with?('//')
           product_hash
         end
 
