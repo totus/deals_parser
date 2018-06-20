@@ -9,15 +9,14 @@ module Bariga
     # mix-in with some crawler common functionality
     module BasicCrawler
       def absolutize_url(url)
-        url = url.gsub(/[\u0080-\u00ff]/, '')
         url = sanitize_url(url)
         URI.parse(url).scheme.eql?('https') ? url : URI.join(self.class.base_url, url).to_s
       end
 
       def sanitize_url(url)
+        url = url.gsub(/[\u0080-\u00ff]/, '')
         parsed_url = URI.parse(url)
-        query_components = URI.decode_www_form(parsed_url.query)
-        parsed_url.query = URI.encode_www_form(query_components.reject {|param| forbidden_params.any? {|fp| param.first.match(fp)} })
+        truncate_query(parsed_url) if parsed_url.query
         parsed_url.to_s
       end
 
@@ -77,6 +76,11 @@ module Bariga
         )
       end
 
+      def truncate_query(uri)
+        query_components = URI.decode_www_form(uri.query)
+        uri.query = URI.encode_www_form(query_components.reject {|param| forbidden_params.any? {|fp| param.first.match(fp)} })
+      end
+
       def incomplete?(product)
         product[:price].to_s.empty? || product[:images].nil? || product[:images].empty? || [product[:url], product[:images]].flatten.any? {|url| !URI.parse(url).absolute? || url.size > 255}
       end
@@ -104,7 +108,7 @@ module Bariga
     module AgentFaker
       def self.headers(added_headers = {})
         {
-            'User-Agent' => "Mozilla/#{rand(5)+1}.0 (#{['Macintosh','Linux', 'Windows'].sample}; Intel Mac OS X 10_#{(10..13).to_a.sample}_5) #{['AppleWebKit', 'Opera', 'Safari', 'Chrome']}/535.36 (KHTML, like Gecko) Chrome/#{(55..66).to_a.sample}.0.3359.181 Safari/537.36",
+            'User-Agent' => "Mozilla/#{rand(5)+1}.0 (#{['Macintosh','Linux', 'Windows'].sample}; Intel Mac OS X 10_#{(10..13).to_a.sample}_5) #{['AppleWebKit', 'Opera', 'Safari', 'Chrome'].sample}/535.36 (KHTML, like Gecko) Chrome/#{(55..66).to_a.sample}.0.3359.181 Safari/537.36",
             'accept-language' => 'en-US,en;q=0.9,ru;q=0.8',
             'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8'
         }.merge(added_headers)
