@@ -40,7 +40,13 @@ module Bariga
           imgs = [product[:images]].flatten.map do |image|
             Image.find_by(url: image) || Image.create(url: image)
           end
-          prod = Product.find_by(url: product[:url]) || Product.create(name: product[:title], url: product[:url], price: product[:price])
+          prod = Product.find_by(url: product[:url])
+          if prod
+            prod.update(name: product[:title], url: product[:url], price: product[:price])
+            prod.save
+          else
+            prod = Product.create(name: product[:title], url: product[:url], price: product[:price])
+          end
           prod.images = imgs
         end
       end
