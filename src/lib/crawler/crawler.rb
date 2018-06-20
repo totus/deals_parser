@@ -16,7 +16,7 @@ module Bariga
       def sanitize_url(url)
         url = url.gsub(/[\u0080-\u00ff]/, '')
         parsed_url = URI.parse(url)
-        truncate_query(parsed_url) if parsed_url.query
+        truncate_query(parsed_url) unless parsed_url.query.nil?
         parsed_url.to_s
       end
 
