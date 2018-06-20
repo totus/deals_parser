@@ -72,7 +72,7 @@ module Bariga
 
         def sanitize_product(product_hash)
           product_hash[:url] = absolutize_url(product_hash[:url])
-          product_hash[:img] = "https:#{product_hash[:img]}" if product_hash[:img].start_with?('//')
+          product_hash[:images] = "https:#{product_hash[:images]}" if product_hash[:images].start_with?('//')
           product_hash
         end
 
