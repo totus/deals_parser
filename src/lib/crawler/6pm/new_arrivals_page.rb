@@ -34,7 +34,7 @@ module Bariga
                   css: 'a[itemprop="url"]',
                   extractor: [:[], :href]
               },
-              img: {
+              images: {
                   css: 'img',
                   extractor: [:[], :src]
               }

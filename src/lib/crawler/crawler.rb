@@ -82,7 +82,13 @@ module Bariga
       end
 
       def incomplete?(product)
-        product[:price].to_s.empty? || product[:images].nil? || product[:images].empty? || [product[:url], product[:images]].flatten.any? {|url| !URI.parse(url).absolute? || url.size > 255}
+        criteria = {
+            empty_price: product[:price].to_s.empty?,
+            nil_images: product[:images].nil?,
+            empty_images: product[:images] && product[:images].empty?,
+            inabsolute_url: [product[:url], product[:images]].flatten.any? {|url| !URI.parse(url).absolute? || url.size > 255}
+        }
+        criteria.values.any?
       end
 
       def extract(element, selector, extractor_fn)
