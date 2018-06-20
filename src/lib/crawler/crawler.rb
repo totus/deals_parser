@@ -10,7 +10,15 @@ module Bariga
     module BasicCrawler
       def absolutize_url(url)
         url = url.gsub(/[\u0080-\u00ff]/, '')
+        url = sanitize_url(url)
         URI.parse(url).scheme.eql?('https') ? url : URI.join(self.class.base_url, url).to_s
+      end
+
+      def sanitize_url(url)
+        parsed_url = URI.parse(url)
+        query_components = URI.decode_www_form(parsed_url.query)
+        parsed_url.query = URI.encode_www_form(query_components.reject {|param| forbidden_params.any? {|fp| param.first.match(fp)} })
+        parsed_url.to_s
       end
 
       def extract_data(element, extract_config)
@@ -63,8 +71,14 @@ module Bariga
 
       private
 
+      def forbidden_params
+        %w(
+        pf_rd_
+        )
+      end
+
       def incomplete?(product)
-        product[:price].to_s.empty? || product[:images].nil? || product[:images].empty?
+        product[:price].to_s.empty? || product[:images].nil? || product[:images].empty? || [product[:url], product[:images]].flatten.any? {|url| !URI.parse(url).absolute? || url.size > 255}
       end
 
       def extract(element, selector, extractor_fn)
