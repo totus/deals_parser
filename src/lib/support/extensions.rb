@@ -17,3 +17,9 @@ class Time
     self > start_time && self < end_time
   end
 end
+
+class Date
+  def next_week(number_of_weeks = 1)
+    self + (7 * number_of_weeks)
+  end
+end

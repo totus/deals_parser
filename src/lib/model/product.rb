@@ -9,6 +9,15 @@ ActiveRecord::Base.establish_connection(
   database: 'dwh'
 )
 
+class Order < ActiveRecord::Base
+  self.table_name = 'orders'
+  belongs_to :user
+end
+
+class User < ActiveRecord::Base
+  self.table_name = 'users'
+end
+
 class Image < ActiveRecord::Base
   self.table_name = 'images'
   has_and_belongs_to_many :products, through: :images_products

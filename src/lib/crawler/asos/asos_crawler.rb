@@ -54,7 +54,7 @@ module Bariga
         private
 
         def current_page_products
-          eval("products_data_from_#{@crawl_type}")
+          send("products_data_from_#{@crawl_type}".to_sym)
         end
 
         def products_data_from_html
