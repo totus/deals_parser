@@ -9,6 +9,7 @@ require_relative '../lib/crawler/amazon/new_arrivals_page.rb'
 require_relative '../lib/crawler/amazon/amazon_crawler.rb'
 require_relative '../lib/crawler/gymboree/gymboree.rb'
 require_relative '../lib/crawler/yoox/yoox.rb'
+require_relative '../lib/crawler/theoutnet/theoutnet.rb'
 
 describe 'Nokogiri-based Crawlers' do
   describe 'Crawl all of the following sites' do
