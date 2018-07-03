@@ -1,15 +1,15 @@
 require 'rspec'
 require 'json'
-require_relative '../lib/crawler/asos/asos_crawler.rb'
-require_relative '../lib/crawler/6pm/new_arrivals_page.rb'
 require_relative '../lib/crawler/vs/victorias_secret.rb'
+require_relative '../lib/crawler/asos/asos_crawler.rb'
+require_relative '../lib/crawler/yoox/yoox.rb'
+require_relative '../lib/crawler/theoutnet/theoutnet.rb'
+require_relative '../lib/crawler/6pm/new_arrivals_page.rb'
 require_relative '../lib/crawler/sd/sports_direct.rb'
 require_relative '../lib/crawler/disney/disney.rb'
 require_relative '../lib/crawler/amazon/new_arrivals_page.rb'
 require_relative '../lib/crawler/amazon/amazon_crawler.rb'
 require_relative '../lib/crawler/gymboree/gymboree.rb'
-require_relative '../lib/crawler/yoox/yoox.rb'
-require_relative '../lib/crawler/theoutnet/theoutnet.rb'
 
 describe 'Nokogiri-based Crawlers' do
   describe 'Crawl all of the following sites' do

@@ -3,16 +3,20 @@ require_relative '../crawler.rb'
 module Bariga
   module Crawler
     module VictoriasSecret
-      class Arrivals
+      class Page
         def self.class_info
           {
-            name: "Victorias Secret #{product_type} New Arrivals crawler",
+            name: "#{shop_name} #{product_type} crawler",
             file_pattern: "#{Date.today.strftime("%Y_%m_%d_vs_#{product_type.downcase}.json")}"
           }
         end
 
         def self.base_url
           'https://www.victoriassecret.com'
+        end
+
+        def self.shop_name
+          'VictoriasSecret'
         end
 
         def initialize
@@ -65,7 +69,7 @@ module Bariga
         end
       end
       # Class to fetch data from Lingerie arrivals
-      class Lingerie < Arrivals
+      class LingerieArrivals < Page
         include BasicCrawler
 
         def self.product_type
@@ -78,7 +82,7 @@ module Bariga
         end
       end
 
-      class Sports < Arrivals
+      class SportsArrivals < Page
         include BasicCrawler
 
         def self.product_type
@@ -91,7 +95,7 @@ module Bariga
         end
       end
 
-      class Sleepwear < Arrivals
+      class SleepwearArrivals < Page
         include BasicCrawler
 
         def self.product_type
@@ -104,8 +108,8 @@ module Bariga
         end
       end
 
-      class PinkSale < Arrivals
-        include BasicCrawler
+      class PinkSale < Page
+        # include BasicCrawler
 
         def self.product_type
           'all_pink'
@@ -113,6 +117,137 @@ module Bariga
 
         def initialize
           @page_url = "#{self.class.base_url}/pink/sale-all-pink"
+          super
+        end
+      end
+
+      class LingerieSale < Page
+        include BasicCrawler
+
+        def self.product_type
+          'ClearanceBras'
+        end
+
+        def initialize
+          @page_url = "#{self.class.base_url}/clearance/lingerie"
+          super
+        end
+      end
+
+
+      class ClearanceBras < Page
+        include BasicCrawler
+
+        def self.product_type
+          'ClearanceBras'
+        end
+
+        def initialize
+          @page_url = "#{self.class.base_url}/sale/clearance-bras"
+          super
+        end
+      end
+
+      class ClearancePanties < Page
+        include BasicCrawler
+
+        def self.product_type
+          'ClearancePanties'
+        end
+
+        def initialize
+          @page_url = "#{self.class.base_url}/sale/clearance-panties"
+          super
+        end
+      end
+
+      class ClearanceSport < Page
+        include BasicCrawler
+
+        def self.product_type
+          'ClearanceSport'
+        end
+
+        def initialize
+          @page_url = "#{self.class.base_url}/clearance/victorias-secret-sport"
+          super
+        end
+      end
+
+      class BeautyAndAccessories < Page
+        include BasicCrawler
+
+        def self.product_type
+          'BeautyAndAccessories'
+        end
+
+        def initialize
+          @page_url = "#{self.class.base_url}/clearance/beautyandaccessories"
+          super
+        end
+      end
+
+      class Accessories < Page
+        include BasicCrawler
+
+        def self.product_type
+          'Accessories'
+        end
+
+        def initialize
+          @page_url = "#{self.class.base_url}/clearance/accessories"
+          super
+        end
+      end
+
+      class PinkMLB < Page
+        include BasicCrawler
+
+        def self.product_type
+          'PinkMLB'
+        end
+
+        def initialize
+          @page_url = "#{self.class.base_url}/sale/clearance-pink-mlb-collection"
+          super
+        end
+      end
+
+      class PinkPCC < Page
+        include BasicCrawler
+
+        def self.product_type
+          'PinkPCC'
+        end
+
+        def initialize
+          @page_url = "#{self.class.base_url}/sale/clearance-pink-collegiate-collection"
+          super
+        end
+      end
+
+      class PinkClearance < Page
+        include BasicCrawler
+
+        def self.product_type
+          'PinkClearance'
+        end
+
+        def initialize
+          @page_url = "#{self.class.base_url}/clearance/pink"
+          super
+        end
+      end
+
+      class PinkSwim < Page
+        include BasicCrawler
+
+        def self.product_type
+          'PinkSwim'
+        end
+
+        def initialize
+          @page_url = "#{self.class.base_url}/clearance/pink-swim"
           super
         end
       end
