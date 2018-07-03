@@ -4,6 +4,12 @@ require 'json'
 require 'sqlite3'
 require_relative '../model/product.rb'
 
+module URI
+  class HTTPS
+    alias_method :to_str, :to_s
+  end
+end
+
 module Bariga
   module Crawler
     # mix-in with some crawler common functionality
@@ -87,6 +93,8 @@ module Bariga
             nil_images: product[:images].nil?,
             empty_images: product[:images] && product[:images].empty?,
             inabsolute_url: [product[:url], product[:images]].flatten.any? {|url| !URI.parse(url).absolute? || url.size > 255}
+
+
         }
         criteria.values.any?
       end
