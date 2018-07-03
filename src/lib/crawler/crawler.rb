@@ -92,7 +92,7 @@ module Bariga
             empty_price: product[:price].to_s.empty?,
             nil_images: product[:images].nil?,
             empty_images: product[:images] && product[:images].empty?,
-            inabsolute_url: [product[:url], product[:images]].flatten.any? {|url| !URI.parse(url).absolute? || url.size > 255}
+            inabsolute_url: [product[:url], product[:images]].flatten.any? {|url| !URI.parse(url).absolute? || url&.to_s.size > 255}
 
 
         }
