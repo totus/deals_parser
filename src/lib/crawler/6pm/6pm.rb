@@ -4,7 +4,7 @@ require_relative '../crawler.rb'
 module Bariga
   module Crawler
     module SixPM
-      class Arrivals
+      class Page
         def self.class_info
           {
               name: "6PM#{product_type} Category crawler",
@@ -85,7 +85,20 @@ module Bariga
         end
       end
 
-      class Men < Arrivals
+      class RecentSales < Page
+        include BasicCrawler
+
+        def self.product_type
+          'RecentSales'
+        end
+
+        def initialize
+          @rel_url = '/null/4gIBMIIDA7LFAQ.zso?s=isNew/desc/goLiveDate/desc/recentSalesStyle/desc/'
+          super
+        end
+      end
+
+      class Men < Page
         include BasicCrawler
 
         def self.product_type
@@ -98,7 +111,7 @@ module Bariga
         end
       end
 
-      class Women < Arrivals
+      class Women < Page
         include BasicCrawler
 
         def self.product_type
